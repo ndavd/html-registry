@@ -25,18 +25,13 @@ Each write is immutable and creates a new incremental version. The mapping is
 structured as `author => target => version => content`.
 
 The canonical read is `html(target)`, which is shorthand for
-`html(target, target)`: the target publishing HTML about itself. You can also
-read cross-authored content via `html(author, target)`.
+`html(target,target)`: the target publishing HTML about itself. You can also
+read cross-authored content via `html(author,target)`.
 
 **Authorization**: writing to `target => target` is permitted if:
 
 - `msg.sender == target`, or
 - `msg.sender == target.owner()`
-
-This means a protocol can register its own UI, or a multisig/deployer that owns
-the protocol contract can do it on its behalf.
-
-Listen to `HTMLRegistry__HtmlSet` events to track updates.
 
 ```solidity
 // Write as msg.sender
@@ -54,6 +49,17 @@ html(address author, address target)
 // Read specific version
 html(address author, address target, uint256 version)
 ```
+
+This means an address can register its own UI, or the `owner()` of the contract
+can do it on its behalf (`html(target)`). If the contract is not ownable (or
+uses another interface, such as role-based ownership) and has no way to call the
+registry, then it's recommended to use a trusted author and target and mention
+that in the protocol's documentation, calling `html(author,target)`.
+
+Listen for `HTMLRegistry__HtmlSet` events to track updates. If in doubt that the
+frontend might be compromised, one can call `latestVersion(author,target)` at a
+past block to get the trusted past version and use it in
+`html(author,target,version)`.
 
 ## Development
 
