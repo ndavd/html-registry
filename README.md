@@ -20,9 +20,10 @@ Thanks to [`@z0r0zzz`](https://x.com/z0r0zzz) for the
 ## How it works
 
 Content is stored via
-[SSTORE2](https://github.com/Vectorized/solady/blob/main/src/utils/SSTORE2.sol).
-Each write is immutable and creates a new incremental version. The mapping is
-structured as `author => target => version => content`.
+[SSTORE2](https://github.com/Vectorized/solady/blob/main/src/utils/SSTORE2.sol)
+(allowing for a max of ~24KB per write). Each write is immutable and creates a
+new incremental version. The mapping is structured as
+`author => target => version => content`.
 
 The canonical read is `html(target)`, which is shorthand for
 `html(target,target)`: the target publishing HTML about itself. You can also
