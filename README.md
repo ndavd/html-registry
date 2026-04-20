@@ -14,6 +14,9 @@ cast call HTML_REGISTRY_ADDRESS 'html(address)(bytes)' PROTOCOL_ADDRESS \
   -r RPC_URL | xxd -r -p >index.html && python3 -m http.server 8000
 ```
 
+Thanks to [`@z0r0zzz`](https://x.com/z0r0zzz) for the
+[idea](https://x.com/z0r0zzz/status/2045794052504015079).
+
 ## How it works
 
 Content is stored via
@@ -51,9 +54,6 @@ html(address author, address target)
 // Read specific version
 html(address author, address target, uint256 version)
 ```
-
-Thanks to [`@z0r0zzz`](https://x.com/z0r0zzz) for the
-[idea](https://x.com/z0r0zzz/status/2045794052504015079).
 
 ## Development
 
