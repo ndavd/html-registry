@@ -28,7 +28,7 @@ The canonical read is `html(target)`, which is shorthand for
 `html(target, target)`: the target publishing HTML about itself. You can also
 read cross-authored content via `html(author, target)`.
 
-**Authorization**: writing to `author => target` is permitted if:
+**Authorization**: writing to `target => target` is permitted if:
 
 - `msg.sender == target`, or
 - `msg.sender == target.owner()`
@@ -39,7 +39,7 @@ the protocol contract can do it on its behalf.
 Listen to `HTMLRegistry__HtmlSet` events to track updates.
 
 ```solidity
-// Write as msg.sender about a target
+// Write as msg.sender
 setHtml(address target, bytes calldata htmlData)
 
 // Write as the target
