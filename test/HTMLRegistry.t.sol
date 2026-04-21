@@ -10,7 +10,6 @@ contract HTMLRegistryTest is Test {
     HTMLRegistry public registry;
     address alice = makeAddr("alice");
     address bob = makeAddr("bob");
-    bytes4 internal constant _FLZ_COMPRESS_SELECTOR = bytes4(keccak256("flzCompress(bytes)"));
 
     function setUp() public {
         registry = new HTMLRegistry();
@@ -105,7 +104,7 @@ contract HTMLRegistryTest is Test {
     }
 
     function test_html_decompressesWhenPrefixed() public {
-        bytes memory compressed = bytes.concat(_FLZ_COMPRESS_SELECTOR, LibZip.flzCompress(_HTML));
+        bytes memory compressed = bytes.concat(bytes4(0xffffffff), LibZip.flzCompress(_HTML));
         vm.prank(alice);
         registry.setHtml(alice, compressed);
 
@@ -130,7 +129,7 @@ contract HTMLRegistryTest is Test {
 
     function test_storageMetrics_plainVsCompressed() public {
         bytes memory compressedBody = LibZip.flzCompress(_HTML);
-        bytes memory compressedPayload = bytes.concat(_FLZ_COMPRESS_SELECTOR, compressedBody);
+        bytes memory compressedPayload = bytes.concat(bytes4(0xffffffff), compressedBody);
 
         vm.startPrank(alice);
         uint256 gasStartPlain = gasleft();

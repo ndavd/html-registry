@@ -11,8 +11,6 @@ interface IOwnable {
 /// @title HTMLRegistry
 /// @notice On-chain registry for associating HTML content to protocols or accounts
 contract HTMLRegistry {
-    bytes4 public constant _FLZ_COMPRESS_SELECTOR = bytes4(keccak256("flzCompress(bytes)"));
-
     /// @dev author => target => version => content
     mapping(address => mapping(address => mapping(uint256 => address))) sPtrs;
     /// @dev author => target => latest version
@@ -48,12 +46,10 @@ contract HTMLRegistry {
         address ptr = sPtrs[author][target][version];
         if (ptr == address(0)) return new bytes(0);
         bytes memory data = SSTORE2.read(ptr);
-        if (data.length < 4) return data;
+        
+        if (bytes4(bytes32(data)) == bytes4(0xffffffff)) return LibZip.flzDecompress(LibBytes.slice(data, 4));
 
-        bytes4 prefix = bytes4(bytes32(LibBytes.slice(data, 0, 4)));
-        if (prefix != _FLZ_COMPRESS_SELECTOR) return data;
-
-        return LibZip.flzDecompress(LibBytes.slice(data, 4));
+        return data;
     }
 
     function setHtml(address target, bytes calldata htmlData) external onlyAuthorized(target) {
