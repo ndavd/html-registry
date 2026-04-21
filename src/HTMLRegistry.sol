@@ -2,7 +2,8 @@
 pragma solidity ^0.8.13;
 
 import {SSTORE2} from "solady/utils/SSTORE2.sol";
-
+import {LibBytes} from "solady/utils/LibBytes.sol";
+import {LibZip} from "solady/utils/LibZip.sol";
 interface IOwnable {
     function owner() external view returns (address);
 }
@@ -10,6 +11,8 @@ interface IOwnable {
 /// @title HTMLRegistry
 /// @notice On-chain registry for associating HTML content to protocols or accounts
 contract HTMLRegistry {
+    bytes4 public constant _FLZ_COMPRESS_SELECTOR = bytes4(keccak256("flzCompress(bytes)"));
+
     /// @dev author => target => version => content
     mapping(address => mapping(address => mapping(uint256 => address))) sPtrs;
     /// @dev author => target => latest version
@@ -44,7 +47,13 @@ contract HTMLRegistry {
     function _html(address author, address target, uint256 version) internal view returns (bytes memory) {
         address ptr = sPtrs[author][target][version];
         if (ptr == address(0)) return new bytes(0);
-        return SSTORE2.read(ptr);
+        bytes memory data = SSTORE2.read(ptr);
+        if (data.length < 4) return data;
+
+        bytes4 prefix = bytes4(bytes32(LibBytes.slice(data, 0, 4)));
+        if (prefix != _FLZ_COMPRESS_SELECTOR) return data;
+
+        return LibZip.flzDecompress(LibBytes.slice(data, 4));
     }
 
     function setHtml(address target, bytes calldata htmlData) external onlyAuthorized(target) {

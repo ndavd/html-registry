@@ -2,12 +2,15 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
+import {console2} from "forge-std/console2.sol";
 import {HTMLRegistry} from "../src/HTMLRegistry.sol";
+import {LibZip} from "solady/utils/LibZip.sol";
 
 contract HTMLRegistryTest is Test {
     HTMLRegistry public registry;
     address alice = makeAddr("alice");
     address bob = makeAddr("bob");
+    bytes4 internal constant _FLZ_COMPRESS_SELECTOR = bytes4(keccak256("flzCompress(bytes)"));
 
     function setUp() public {
         registry = new HTMLRegistry();
@@ -99,6 +102,54 @@ contract HTMLRegistryTest is Test {
         vm.prank(alice);
         registry.setHtml(alice, _HTML);
         assertEq(registry.html(alice, alice, 2), new bytes(0));
+    }
+
+    function test_html_decompressesWhenPrefixed() public {
+        bytes memory compressed = bytes.concat(_FLZ_COMPRESS_SELECTOR, LibZip.flzCompress(_HTML));
+        vm.prank(alice);
+        registry.setHtml(alice, compressed);
+
+        assertEq(registry.html(alice, alice), _HTML);
+    }
+
+    function test_html_returnsRawWhenPrefixDoesNotMatch() public {
+        bytes memory payload = bytes.concat(bytes4(0xdeadbeef), bytes("raw bytes"));
+        vm.prank(alice);
+        registry.setHtml(alice, payload);
+
+        assertEq(registry.html(alice, alice), payload);
+    }
+
+    function test_html_returnsRawWhenDataTooShortForPrefix() public {
+        bytes memory payload = hex"010203";
+        vm.prank(alice);
+        registry.setHtml(alice, payload);
+
+        assertEq(registry.html(alice, alice), payload);
+    }
+
+    function test_storageMetrics_plainVsCompressed() public {
+        bytes memory compressedBody = LibZip.flzCompress(_HTML);
+        bytes memory compressedPayload = bytes.concat(_FLZ_COMPRESS_SELECTOR, compressedBody);
+
+        vm.startPrank(alice);
+        uint256 gasStartPlain = gasleft();
+        registry.setHtml(alice, _HTML);
+        uint256 gasUsedPlain = gasStartPlain - gasleft();
+
+        uint256 gasStartCompressed = gasleft();
+        registry.setHtml(alice, compressedPayload);
+        uint256 gasUsedCompressed = gasStartCompressed - gasleft();
+        vm.stopPrank();
+
+        assertEq(registry.html(alice, alice, 1), _HTML);
+        assertEq(registry.html(alice, alice, 2), _HTML);
+
+        console2.log("plain length", _HTML.length);
+        console2.log("compressed length", compressedBody.length);
+        console2.log("compressed+selector length", compressedPayload.length);
+        console2.log("plain write gas", gasUsedPlain);
+        console2.log("compressed write gas", gasUsedCompressed);
     }
 
     function test_emitsHtmlSet() public {
