@@ -1,16 +1,16 @@
 ## On-Chain HTML Registry
 
-On-chain HTML registry for protocols and accounts. Store and retrieve versioned
-HTML content directly from the blockchain.
+On-chain HTML registry singleton for protocols and accounts. Store and retrieve
+versioned HTML content directly from the blockchain.
 
 - No DNS.
 - No provider.
-- Fallback UI for protocols and accounts.
+- **Fallback UI** for protocols and accounts.
 
 Spin up a local DApp in one line:
 
 ```bash
-cast call HTML_REGISTRY_ADDRESS 'html(address)(string)' PROTOCOL_ADDRESS \
+cast call 0xFa11bacCdc38022dbf8795cC94333304C9f22722 'html(address)(string)' PROTOCOL_ADDRESS \
   -r RPC_URL | jq -r . >index.html && python3 -m http.server 8000
 ```
 
@@ -66,6 +66,24 @@ past block to get the trusted past version and use it in
 
 This contract has not been formally audited. It has been reviewed and tested,
 but no guarantees are made. **Use at your own risk.**
+
+## Deployments
+
+The registry is deployed as a singleton (via
+[createx](https://github.com/pcaversaccio/createx)) at the address
+`0xFa11bacCdc38022dbf8795cC94333304C9f22722`.
+
+Currently deployed to:
+
+- [Mainnet](https://etherscan.io/address/0xfa11baccdc38022dbf8795cc94333304c9f22722)
+
+If you need it to be deployed to another chain, you can do it yourself as the
+deployment is permissionless. You can do it via the `HTMLRegistryDeploy` script,
+like so:
+
+```bash
+forge script script/HTMLRegistryDeploy.s.sol --rpc-url 'RPC_URL_OF_MISSING_CHAIN' --broadcast
+```
 
 ## Development
 
