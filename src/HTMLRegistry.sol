@@ -35,39 +35,39 @@ contract HTMLRegistry {
         _;
     }
 
-    function _write(address author, address target, bytes calldata htmlData) internal {
+    function _write(address author, address target, string calldata htmlData) internal {
         uint256 version = ++sVersions[author][target];
-        sPtrs[author][target][version] = SSTORE2.write(htmlData);
+        sPtrs[author][target][version] = SSTORE2.write(bytes(htmlData));
         emit HTMLRegistry__HtmlSet(author, target, version);
     }
 
-    function _html(address author, address target, uint256 version) internal view returns (bytes memory) {
+    function _html(address author, address target, uint256 version) internal view returns (string memory) {
         address ptr = sPtrs[author][target][version];
-        if (ptr == address(0)) return new bytes(0);
-        return SSTORE2.read(ptr);
+        if (ptr == address(0)) return "";
+        return string(SSTORE2.read(ptr));
     }
 
-    function setHtml(address target, bytes calldata htmlData) external onlyAuthorized(target) {
+    function setHtml(address target, string calldata htmlData) external onlyAuthorized(target) {
         _write(msg.sender, target, htmlData);
     }
 
-    function setHtmlAsTarget(address target, bytes calldata htmlData) external onlyAuthorized(target) {
+    function setHtmlAsTarget(address target, string calldata htmlData) external onlyAuthorized(target) {
         _write(target, target, htmlData);
     }
 
-    function html(address author, address target, uint256 version) external view returns (bytes memory) {
+    function html(address author, address target, uint256 version) external view returns (string memory) {
         return _html(author, target, version);
     }
 
-    function html(address author, address target) external view returns (bytes memory) {
+    function html(address author, address target) external view returns (string memory) {
         return _html(author, target, sVersions[author][target]);
     }
 
-    function html(address addr, uint256 version) external view returns (bytes memory) {
+    function html(address addr, uint256 version) external view returns (string memory) {
         return _html(addr, addr, version);
     }
 
-    function html(address addr) external view returns (bytes memory) {
+    function html(address addr) external view returns (string memory) {
         return _html(addr, addr, sVersions[addr][addr]);
     }
 

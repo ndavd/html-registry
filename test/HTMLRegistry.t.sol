@@ -76,29 +76,29 @@ contract HTMLRegistryTest is Test {
 
     function test_versioning_readSpecificVersion() public {
         vm.startPrank(alice);
-        registry.setHtml(alice, bytes("foo"));
+        registry.setHtml(alice, "foo");
         registry.setHtml(alice, _HTML);
-        assertEq(registry.html(alice, alice, 1), bytes("foo"));
+        assertEq(registry.html(alice, alice, 1), "foo");
         assertEq(registry.html(alice, alice, 2), _HTML);
     }
 
     function test_latestVersion() public {
         vm.startPrank(alice);
         registry.setHtml(alice, _HTML);
-        registry.setHtml(alice, bytes("foo"));
-        assertEq(registry.html(alice), bytes("foo"));
-        assertEq(registry.html(alice, 2), bytes("foo"));
+        registry.setHtml(alice, "foo");
+        assertEq(registry.html(alice), "foo");
+        assertEq(registry.html(alice, 2), "foo");
         assertEq(registry.latestVersion(alice, alice), 2);
     }
 
     function test_html_returnsEmptyIfNotSet() public view {
-        assertEq(registry.html(alice, alice), new bytes(0));
+        assertEq(registry.html(alice, alice), "");
     }
 
     function test_html_returnsEmptyForUnsetVersion() public {
         vm.prank(alice);
         registry.setHtml(alice, _HTML);
-        assertEq(registry.html(alice, alice, 2), new bytes(0));
+        assertEq(registry.html(alice, alice, 2), "");
     }
 
     function test_emitsHtmlSet() public {
@@ -108,11 +108,11 @@ contract HTMLRegistryTest is Test {
         registry.setHtml(alice, _HTML);
         vm.expectEmit(true, true, false, true);
         emit HTMLRegistry.HTMLRegistry__HtmlSet(alice, alice, 2);
-        registry.setHtml(alice, bytes("foo"));
+        registry.setHtml(alice, "foo");
     }
 
     // Borrowed from https://etherscan.io/address/0xfd38f20e6739fb7362ab49f9248c8abc90a9882e
-    bytes constant _HTML = "<!doctype html>\n" "<meta charset=\"utf-8\">\n"
+    string constant _HTML = "<!doctype html>\n" "<meta charset=\"utf-8\">\n"
         "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n" "<title>zSwap</title>\n"
         "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/ethers/6.15.0/ethers.umd.min.js\"\n"
         "  integrity=\"sha512-UXYETj+vXKSURF1UlgVRLzWRS9ZiQTv3lcL4rbeLyqTXCPNZC6PTLF/Ik3uxm2Zo+E109cUpJPZfLxJsCgKSng==\"\n"

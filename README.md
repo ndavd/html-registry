@@ -10,8 +10,8 @@ HTML content directly from the blockchain.
 Spin up a local DApp in one line:
 
 ```bash
-cast call HTML_REGISTRY_ADDRESS 'html(address)(bytes)' PROTOCOL_ADDRESS \
-  -r RPC_URL | xxd -r -p >index.html && python3 -m http.server 8000
+cast call HTML_REGISTRY_ADDRESS 'html(address)(string)' PROTOCOL_ADDRESS \
+  -r RPC_URL | jq -r . >index.html && python3 -m http.server 8000
 ```
 
 Thanks to [`@z0r0zzz`](https://x.com/z0r0zzz) for the
@@ -36,10 +36,10 @@ read cross-authored content via `html(author,target)`.
 
 ```solidity
 // Write as msg.sender
-setHtml(address target, bytes calldata htmlData)
+setHtml(address target, string calldata htmlData)
 
 // Write as the target
-setHtmlAsTarget(address target, bytes calldata htmlData)
+setHtmlAsTarget(address target, string calldata htmlData)
 
 // Read latest, canonical shorthand, author == target
 html(address addr)
