@@ -73,17 +73,18 @@ The registry is deployed as a singleton (via
 [createx](https://github.com/pcaversaccio/createx)) at the address
 [`0xFa11bacCdc38022dbf8795cC94333304C9f22722`](https://sourcify.dev/#/lookup/0xFa11bacCdc38022dbf8795cC94333304C9f22722).
 
-Currently deployed to:
+> [!TIP]
+> The deployment is permissionless, so if the registry hasn't been deployed to a
+> certain chain yet, you can do it yourself using the `HTMLRegistryDeploy`
+> script, like so:
+>
+> ```bash
+> forge script script/HTMLRegistryDeploy.s.sol --rpc-url 'RPC_URL_OF_MISSING_CHAIN' --broadcast
+> ```
 
-- [Mainnet](https://etherscan.io/address/0xfa11baccdc38022dbf8795cc94333304c9f22722)
+### Networks
 
-If you need it to be deployed to another chain, you can do it yourself as the
-deployment is permissionless. You can do it via the `HTMLRegistryDeploy` script,
-like so:
-
-```bash
-forge script script/HTMLRegistryDeploy.s.sol --rpc-url 'RPC_URL_OF_MISSING_CHAIN' --broadcast
-```
+- [Ethereum](https://etherscan.io/address/0xfa11baccdc38022dbf8795cc94333304c9f22722)
 
 ## Development
 
