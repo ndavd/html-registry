@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity 0.8.34;
 
 import {SSTORE2} from "solady/utils/SSTORE2.sol";
 
