@@ -62,6 +62,11 @@ frontend might be compromised, one can call `latestVersion(author,target)` at a
 past block to get the trusted past version and use it in
 `html(author,target,version)`.
 
+## Security
+
+This contract has not been formally audited. It has been reviewed and tested,
+but no guarantees are made. **Use at your own risk.**
+
 ## Development
 
 ### Build
