@@ -71,7 +71,7 @@ but no guarantees are made. **Use at your own risk.**
 
 The registry is deployed as a singleton (via
 [createx](https://github.com/pcaversaccio/createx)) at the address
-`0xFa11bacCdc38022dbf8795cC94333304C9f22722`.
+[`0xFa11bacCdc38022dbf8795cC94333304C9f22722`](https://sourcify.dev/#/lookup/0xFa11bacCdc38022dbf8795cC94333304C9f22722).
 
 Currently deployed to:
 
